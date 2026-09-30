@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic & Scientific Calculator Hub</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .font-mono-num {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.5);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(107, 114, 128, 0.8);
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .print-card {
+                box-shadow: none !important;
+                border: 1px solid #e5e7eb !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200 flex flex-col">
+
+    <!-- Navbar Header -->
+    <header class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo & Brand -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-brand-500/20">
+                        <i class="fa-solid fa-calculator text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg leading-tight tracking-tight text-slate-900 dark:text-white">AcadCalc <span class="text-brand-500 text-xs px-2 py-0.5 rounded-full bg-brand-50 dark:bg-brand-900/40 border border-brand-200 dark:border-brand-800">Pro</span></h1>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Academic & Scientific Suite</p>
+                    </div>
+                </div>
+
+                <!-- Theme Toggle & Print Actions -->
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" title="Toggle Light/Dark Theme">
+                        <i id="themeIcon" class="fa-solid fa-moon"></i>
+                    </button>
+                    <button onclick="window.print()" class="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-all">
+                        <i class="fa-solid fa-print"></i>
+                        <span>Print Summary</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab Navigation Header -->
+            <div class="flex space-x-1 sm:space-x-2 border-t border-slate-200 dark:border-slate-800 pt-1">
+                <button id="tab-btn-calculator" onclick="switchTab('calculator')" class="tab-btn flex-1 py-2.5 px-3 text-xs sm:text-sm font-semibold rounded-t-lg transition-all border-b-2 flex items-center justify-center gap-2 text-brand-600 border-brand-600 dark:text-brand-400 dark:border-brand-400 bg-brand-50/50 dark:bg-slate-800/50">
+                    <i class="fa-solid fa-calculator"></i>
+                    <span>Calculator</span>
+                </button>
+                <button id="tab-btn-sgpa" onclick="switchTab('sgpa')" class="tab-btn flex-1 py-2.5 px-3 text-xs sm:text-sm font-semibold rounded-t-lg transition-all border-b-2 text-slate-500 border-transparent hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100/50 dark:hover:bg-slate-800/30 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <span>SGPA Calc</span>
+                </button>
+                <button id="tab-btn-cgpa" onclick="switchTab('cgpa')" class="tab-btn flex-1 py-2.5 px-3 text-xs sm:text-sm font-semibold rounded-t-lg transition-all border-b-2 text-slate-500 border-transparent hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100/50 dark:hover:bg-slate-800/30 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>CGPA Calc</span>
+                </button>
+                <button id="tab-btn-planner" onclick="switchTab('planner')" class="tab-btn flex-1 py-2.5 px-3 text-xs sm:text-sm font-semibold rounded-t-lg transition-all border-b-2 text-slate-500 border-transparent hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100/50 dark:hover:bg-slate-800/30 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-bullseye"></i>
+                    <span class="hidden sm:inline">Target Planner</span>
+                    <span class="sm:hidden">Planner</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Notification Toast Element -->
+    <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 ease-out bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700 dark:border-slate-300 max-w-sm">
+        <i id="toastIcon" class="fa-solid fa-circle-info text-brand-500"></i>
+        <span id="toastMsg" class="text-sm font-medium">Notification message</span>
+    </div>
+
+    <!-- Main Content Body -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- TAB 1: STANDARD & SCIENTIFIC CALCULATOR MODULE -->
+        <section id="tab-calculator" class="tab-content transition-opacity duration-200">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- Main Calculator Workspace -->
+                <div class="lg:col-span-8 bg-white dark:bg-slate-800/90 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700/60 shadow-xl shadow-slate-200/50 dark:shadow-none">
+                    
+                    <!-- Top Controller Bar -->
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-slate-700/50">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                                Mode: <span id="calcModeLabel" class="text-brand-600 dark:text-brand-400">Standard</span>
+                            </span>
+                            <span id="degRadBadge" class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                                DEG
+                            </span>
+                        </div>
+                        <button onclick="toggleScientific()" id="sciToggleBtn" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800 hover:bg-brand-100 dark:hover:bg-brand-900/60 transition-all flex items-center gap-1.5">
+                            <i class="fa-solid fa-flask text-xs"></i>
+                            <span id="sciToggleText">Show Scientific Mode</span>
+                        </button>
+                    </div>
+
+                    <!-- Calculator Screen Display -->
+                    <div class="bg-slate-100 dark:bg-slate-950 p-4 rounded-xl mb-5 text-right font-mono-num relative shadow-inner overflow-hidden border border-slate-200 dark:border-slate-800">
+                        <div id="calcExpr" class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm min-h-[1.25rem] overflow-x-auto whitespace-nowrap mb-1 tracking-wider"></div>
+                        <div id="calcDisplay" class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight overflow-x-auto whitespace-nowrap scrollbar-none py-1">0</div>
+                    </div>
+
+                    <!-- Scientific Functions Panel -->
+                    <div id="scientificPanel" class="hidden grid grid-cols-5 gap-2 mb-3">
+                        <button onclick="calcAngleMode()" id="angleModeBtn" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all">DEG</button>
+                        <button onclick="calcInputFunc('sin(')" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all">sin</button>
+                        <button onclick="calcInputFunc('cos(')" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all">cos</button>
+                        <button onclick="calcInputFunc('tan(')" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all">tan</button>
+                        <button onclick="calcInputFunc('sqrt(')" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all">√</button>
+
+                        <button onclick="calcInputFunc('log(')" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all">log</button>
+                        <button onclick="calcInputFunc('ln(')" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all">ln</button>
+                        <button onclick="calcInputOp('^')" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all">x^y</button>
+                        <button onclick="calcInput('(')" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all">(</button>
+                        <button onclick="calcInput(')')" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all">)</button>
+
+                        <button onclick="calcInputConst('π')" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all">π</button>
+                        <button onclick="calcInputConst('e')" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all">e</button>
+                        <button onclick="calcInputFunc('abs(')" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all">|x|</button>
+                        <button onclick="calcFactorial()" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all">n!</button>
+                        <button onclick="calcInputOp('%')" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all">%</button>
+                    </div>
+
+                    <!-- Standard Keypad -->
+                    <div class="grid grid-cols-4 gap-2.5 font-semibold">
+                        <!-- Row 1 -->
+                        <button onclick="calcClear()" class="p-3.5 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 active:scale-95 transition-all text-sm">AC</button>
+                        <button onclick="calcBackspace()" class="p-3.5 rounded-xl bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/50 active:scale-95 transition-all text-sm"><i class="fa-solid fa-backspace"></i></button>
+                        <button onclick="calcMemory('mc')" class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-95 transition-all text-xs">MC</button>
+                        <button onclick="calcInputOp('/')" class="p-3.5 rounded-xl bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 hover:bg-brand-200 dark:hover:bg-brand-900/80 active:scale-95 transition-all text-base">÷</button>
+
+                        <!-- Row 2 -->
+                        <button onclick="calcInput('7')" class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 active:scale-95 transition-all text-lg">7</button>
+                        <button onclick="calcInput('8')" class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 active:scale-95 transition-all text-lg">8</button>
+                        <button onclick="calcInput('9')" class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 active:scale-95 transition-all text-lg">9</button>
+                        <button onclick="calcInputOp('*')" class="p-3.5 rounded-xl bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 hover:bg-brand-200 dark:hover:bg-brand-900/80 active:scale-95 transition-all text-base">×</button>
+
+                        <!-- Row 3 -->
+                        <button onclick="calcInput('4')" class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 active:scale-95 transition-all text-lg">4</button>
+                        <button onclick="calcInput('5')" class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 active:scale-95 transition-all text-lg">5</button>
+                        <button onclick="calcInput('6')" class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 active:scale-95 transition-all text-lg">6</button>
+                        <button onclick="calcInputOp('-')" class="p-3.5 rounded-xl bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 hover:bg-brand-200 dark:hover:bg-brand-900/80 active:scale-95 transition-all text-base">−</button>
+
+                        <!-- Row 4 -->
+                        <button onclick="calcInput('1')" class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 active:scale-95 transition-all text-lg">1</button>
+                        <button onclick="calcInput('2')" class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 active:scale-95 transition-all text-lg">2</button>
+                        <button onclick="calcInput('3')" class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 active:scale-95 transition-all text-lg">3</button>
+                        <button onclick="calcInputOp('+')" class="p-3.5 rounded-xl bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 hover:bg-brand-200 dark:hover:bg-brand-900/80 active:scale-95 transition-all text-base">+</button>
+
+                        <!-- Row 5 -->
+                        <button onclick="calcInput('0')" class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 active:scale-95 transition-all text-lg">0</button>
+                        <button onclick="calcInput('.')" class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 active:scale-95 transition-all text-lg">.</button>
+                        <button onclick="calcEquals()" class="col-span-2 p-3.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 text-white hover:opacity-90 active:scale-95 transition-all text-lg font-bold shadow-md shadow-brand-500/30">=</button>
+                    </div>
+                </div>
+
+                <!-- History Log Panel -->
+                <div class="lg:col-span-4 bg-white dark:bg-slate-800/90 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-700/60 shadow-xl shadow-slate-200/50 dark:shadow-none flex flex-col h-full max-h-[500px]">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700/50 mb-3">
+                        <h3 class="font-bold text-sm text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left text-brand-500"></i>
+                            <span>Calculation History</span>
+                        </h3>
+                        <button onclick="clearCalculatorHistory()" class="text-xs text-slate-400 hover:text-red-500 transition-colors">
+                            Clear
+                        </button>
+                    </div>
+                    
+                    <div id="calcHistoryContainer" class="flex-1 overflow-y-auto space-y-2 pr-1 font-mono-num text-xs">
+                        <div class="text-slate-400 text-center py-8 italic">No calculations yet</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 2: SGPA CALCULATOR MODULE -->
+        <section id="tab-sgpa" class="tab-content hidden transition-opacity duration-200">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- SGPA Inputs Form Card -->
+                <div class="lg:col-span-8 bg-white dark:bg-slate-800/90 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700/60 shadow-xl shadow-slate-200/50 dark:shadow-none">
+                    
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-5 border-b border-slate-100 dark:border-slate-700/50">
+                        <div>
+                            <h2 class="font-bold text-lg text-slate-900 dark:text-white">Semester Grade Point Average (SGPA)</h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Add course subjects, grades, and credit hours</p>
+                        </div>
+                        
+                        <!-- Grading Scale Selector -->
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">Scale System:</label>
+                            <select id="sgpaScaleType" onchange="switchSgpaScale()" class="text-xs bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200 rounded-lg p-2 font-medium focus:ring-2 focus:ring-brand-500 outline-none">
+                                <option value="letter">Letter Grades (O, A+, A...)</option>
+                                <option value="points">Direct Points (0 - 10)</option>
+                                <option value="marks">Marks Percentage (%)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Subject List Dynamic Container -->
+                    <div id="sgpaSubjectsContainer" class="space-y-3 mb-5">
+                        <!-- Dynamic subject rows inserted here by JavaScript -->
+                    </div>
+
+                    <!-- Action Control Buttons -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-700/50">
+                        <button onclick="addSgpaRow()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-plus text-brand-500"></i>
+                            <span>Add Subject</span>
+                        </button>
+                        
+                        <button onclick="calculateSgpa()" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 text-white text-xs font-bold hover:opacity-90 transition-all shadow-md shadow-brand-500/20 flex items-center gap-2">
+                            <i class="fa-solid fa-calculator"></i>
+                            <span>Calculate SGPA</span>
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- SGPA Result Display Panel -->
+                <div class="lg:col-span-4 bg-white dark:bg-slate-800/90 rounded-2xl p-5 border border-slate-200 dark:border-slate-700/60 shadow-xl shadow-slate-200/50 dark:shadow-none print-card">
+                    <h3 class="font-bold text-sm text-slate-800 dark:text-slate-200 pb-3 border-b border-slate-100 dark:border-slate-700/50 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-award text-brand-500"></i>
+                        <span>SGPA Summary</span>
+                    </h3>
+
+                    <div class="text-center py-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl mb-4 border border-slate-100 dark:border-slate-800">
+                        <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Calculated SGPA</div>
+                        <div id="sgpaResultValue" class="text-4xl font-extrabold text-brand-600 dark:text-brand-400 font-mono-num">0.00</div>
+                        <div id="sgpaBadge" class="inline-block mt-2 px-3 py-0.5 rounded-full text-xs font-semibold bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                            Awaiting Input
+                        </div>
+                    </div>
+
+                    <div class="space-y-2.5 text-xs text-slate-600 dark:text-slate-300 mb-5">
+                        <div class="flex justify-between py-1 border-b border-slate-100 dark:border-slate-700/40">
+                            <span class="text-slate-400">Total Credits:</span>
+                            <span id="sgpaTotalCredits" class="font-bold font-mono-num">0</span>
+                        </div>
+                        <div class="flex justify-between py-1 border-b border-slate-100 dark:border-slate-700/40">
+                            <span class="text-slate-400">Total Grade Points:</span>
+                            <span id="sgpaTotalPoints" class="font-bold font-mono-num">0</span>
+                        </div>
+                        <div class="flex justify-between py-1">
+                            <span class="text-slate-400">Approx. Percentage:</span>
+                            <span id="sgpaPercentage" class="font-bold font-mono-num">0%</span>
+                        </div>
+                    </div>
+
+                    <button id="sendToCgpaBtn" onclick="sendSgpaToCgpa()" class="w-full py-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 text-xs font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-all flex items-center justify-center gap-2 no-print">
+                        <i class="fa-solid fa-share-from-square"></i>
+                        <span>Send SGPA to CGPA List</span>
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 3: CGPA CALCULATOR MODULE -->
+        <section id="tab-cgpa" class="tab-content hidden transition-opacity duration-200">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- CGPA Inputs Form Card -->
+                <div class="lg:col-span-8 bg-white dark:bg-slate-800/90 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700/60 shadow-xl shadow-slate-200/50 dark:shadow-none">
+                    
+                    <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-100 dark:border-slate-700/50">
+                        <div>
+                            <h2 class="font-bold text-lg text-slate-900 dark:text-white">Cumulative Grade Point Average (CGPA)</h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Combine SGPAs across semesters to calculate overall CGPA</p>
+                        </div>
+                    </div>
+
+                    <!-- Semester Dynamic Container -->
+                    <div id="cgpaSemestersContainer" class="space-y-3 mb-5">
+                        <!-- Dynamic semester rows inserted here by JavaScript -->
+                    </div>
+
+                    <!-- Action Control Buttons -->
+                    <div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-700/50">
+                        <button onclick="addCgpaRow()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-plus text-brand-500"></i>
+                            <span>Add Semester</span>
+                        </button>
+                        
+                        <button onclick="calculateCgpa()" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 text-white text-xs font-bold hover:opacity-90 transition-all shadow-md shadow-brand-500/20 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <span>Calculate CGPA</span>
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- CGPA Result Display Panel -->
+                <div class="lg:col-span-4 bg-white dark:bg-slate-800/90 rounded-2xl p-5 border border-slate-200 dark:border-slate-700/60 shadow-xl shadow-slate-200/50 dark:shadow-none print-card">
+                    <h3 class="font-bold text-sm text-slate-800 dark:text-slate-200 pb-3 border-b border-slate-100 dark:border-slate-700/50 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-trophy text-amber-500"></i>
+                        <span>Cumulative CGPA Summary</span>
+                    </h3>
+
+                    <div class="text-center py-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl mb-4 border border-slate-100 dark:border-slate-800">
+                        <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Overall CGPA</div>
+                        <div id="cgpaResultValue" class="text-4xl font-extrabold text-indigo-600 dark:text-indigo-400 font-mono-num">0.00</div>
+                        <div id="cgpaClassification" class="inline-block mt-2 px-3 py-0.5 rounded-full text-xs font-semibold bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                            Awaiting Input
+                        </div>
+                    </div>
+
+                    <div class="space-y-2.5 text-xs text-slate-600 dark:text-slate-300">
+                        <div class="flex justify-between py-1 border-b border-slate-100 dark:border-slate-700/40">
+                            <span class="text-slate-400">Total Semesters:</span>
+                            <span id="cgpaTotalSemesters" class="font-bold font-mono-num">0</span>
+                        </div>
+                        <div class="flex justify-between py-1 border-b border-slate-100 dark:border-slate-700/40">
+                            <span class="text-slate-400">Earned Credits:</span>
+                            <span id="cgpaEarnedCredits" class="font-bold font-mono-num">0</span>
+                        </div>
+                        <div class="flex justify-between py-1">
+                            <span class="text-slate-400">Approx Percentage (CGPA × 9.5):</span>
+                            <span id="cgpaPercentage" class="font-bold font-mono-num">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 4: TARGET PLANNER MODULE -->
+        <section id="tab-planner" class="tab-content hidden transition-opacity duration-200">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- Target Inputs Form -->
+                <div class="lg:col-span-7 bg-white dark:bg-slate-800/90 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700/60 shadow-xl shadow-slate-200/50 dark:shadow-none">
+                    
+                    <div class="pb-4 mb-5 border-b border-slate-100 dark:border-slate-700/50">
+                        <h2 class="font-bold text-lg text-slate-900 dark:text-white">Target CGPA Planner</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Calculate required SGPA in remaining credits to achieve your target graduation CGPA</p>
+                    </div>
+
+                    <div class="space-y-4 text-xs">
+                        <div>
+                            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Current Cumulative CGPA</label>
+                            <input type="number" id="targetCurrentCgpa" step="0.01" min="0" max="10" placeholder="e.g. 7.50" class="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Completed Total Credits</label>
+                            <input type="number" id="targetCompletedCredits" step="0.5" min="0" placeholder="e.g. 60" class="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Desired Target CGPA</label>
+                            <input type="number" id="targetDesiredCgpa" step="0.01" min="0" max="10" placeholder="e.g. 8.50" class="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Remaining Course Credits</label>
+                            <input type="number" id="targetRemainingCredits" step="0.5" min="0" placeholder="e.g. 40" class="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                        </div>
+
+                        <button onclick="calculateTargetSgpa()" class="w-full mt-2 py-3 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 text-white font-bold hover:opacity-90 transition-all shadow-md shadow-brand-500/20 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-bullseye"></i>
+                            <span>Calculate Required Target SGPA</span>
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Target Output Card -->
+                <div class="lg:col-span-5 bg-white dark:bg-slate-800/90 rounded-2xl p-5 border border-slate-200 dark:border-slate-700/60 shadow-xl shadow-slate-200/50 dark:shadow-none print-card">
+                    <h3 class="font-bold text-sm text-slate-800 dark:text-slate-200 pb-3 border-b border-slate-100 dark:border-slate-700/50 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-compass text-emerald-500"></i>
+                        <span>Planner Output</span>
+                    </h3>
+
+                    <div class="text-center py-5 bg-slate-50 dark:bg-slate-900/50 rounded-xl mb-4 border border-slate-100 dark:border-slate-800">
+                        <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Required Average SGPA</div>
+                        <div id="targetRequiredSgpa" class="text-4xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono-num">0.00</div>
+                        <div id="targetFeasibilityBadge" class="inline-block mt-2 px-3 py-0.5 rounded-full text-xs font-semibold bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                            Awaiting Calculation
+                        </div>
+                    </div>
+
+                    <p id="targetAnalysisMsg" class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed text-center">
+                        Enter your current CGPA, credits completed, desired final CGPA, and remaining credits to evaluate target feasibility.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 dark:border-slate-800 py-4 mt-auto no-print">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400 dark:text-slate-500">
+            AcadCalc Pro Suite &bull; Standard/Scientific & SGPA/CGPA Academic Toolkit
+        </div>
+    </footer>
+
+    <!-- APPLICATION JAVASCRIPT LOGIC -->
+    <script>
+        // Global App State
+        let isScientificMode = false;
+        let angleMode = 'DEG'; // DEG or RAD
+        let calcMemoryValue = 0;
+        let historyList = [];
+        
+        // SGPA Grade Scale Table (10-point standard conversion)
+        const letterGradeMap = {
+            'O': 10,
+            'A+': 9,
+            'A': 8,
+            'B+': 7,
+            'B': 6,
+            'C': 5,
+            'P': 4,
+            'F': 0
+        };
+
+        // Tab Switcher Engine
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('text-brand-600', 'border-brand-600', 'dark:text-brand-400', 'dark:border-brand-400', 'bg-brand-50/50', 'dark:bg-slate-800/50');
+                btn.classList.add('text-slate-500', 'border-transparent');
+            });
+
+            const activeContent = document.getElementById(`tab-${tabId}`);
+            if (activeContent) activeContent.classList.remove('hidden');
+
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-500', 'border-transparent');
+                activeBtn.classList.add('text-brand-600', 'border-brand-600', 'dark:text-brand-400', 'dark:border-brand-400', 'bg-brand-50/50', 'dark:bg-slate-800/50');
+            }
+        }
+
+        // Theme Switcher
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                themeIcon.className = 'fa-solid fa-sun text-amber-500';
+            } else {
+                html.classList.add('dark');
+                themeIcon.className = 'fa-solid fa-moon';
+            }
+        }
+
+        // Notification Toast Message System
+        function showToast(message, iconClass = 'fa-circle-info') {
+            const toast = document.getElementById('toastNotification');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.innerText = message;
+            toastIcon.className = `fa-solid ${iconClass} text-brand-500`;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Standard & Scientific Calculator Functions
+        function toggleScientific() {
+            isScientificMode = !isScientificMode;
+            const sciPanel = document.getElementById('scientificPanel');
+            const sciBtnText = document.getElementById('sciToggleText');
+            const modeLabel = document.getElementById('calcModeLabel');
+
+            if (isScientificMode) {
+                sciPanel.classList.remove('hidden');
+                sciBtnText.innerText = 'Hide Scientific Mode';
+                modeLabel.innerText = 'Scientific';
+            } else {
+                sciPanel.classList.add('hidden');
+                sciBtnText.innerText = 'Show Scientific Mode';
+                modeLabel.innerText = 'Standard';
+            }
+        }
+
+        function calcAngleMode() {
+            angleMode = angleMode === 'DEG' ? 'RAD' : 'DEG';
+            document.getElementById('angleModeBtn').innerText = angleMode;
+            document.getElementById('degRadBadge').innerText = angleMode;
+            showToast(`Angle unit switched to ${angleMode}`);
+        }
+
+        function calcInput(val) {
+            const display = document.getElementById('calcDisplay');
+            if (display.innerText === '0' || display.innerText === 'Error') {
+                display.innerText = val;
+            } else {
+                display.innerText += val;
+            }
+        }
+
+        function calcInputOp(op) {
+            const display = document.getElementById('calcDisplay');
+            const lastChar = display.innerText.slice(-1);
+            if (['+', '-', '*', '/', '^', '%'].includes(lastChar)) {
+                display.innerText = display.innerText.slice(0, -1) + op;
+            } else {
+                display.innerText += op;
+            }
+        }
+
+        function calcInputFunc(fnStr) {
+            const display = document.getElementById('calcDisplay');
+            if (display.innerText === '0' || display.innerText === 'Error') {
+                display.innerText = fnStr;
+            } else {
+                display.innerText += fnStr;
+            }
+        }
+
+        function calcInputConst(cStr) {
+            const display = document.getElementById('calcDisplay');
+            if (display.innerText === '0' || display.innerText === 'Error') {
+                display.innerText = cStr;
+            } else {
+                display.innerText += cStr;
+            }
+        }
+
+        function calcFactorial() {
+            const display = document.getElementById('calcDisplay');
+            const num = parseFloat(display.innerText);
+            if (isNaN(num) || num < 0) {
+                display.innerText = 'Error';
+                return;
+            }
+            let fact = 1;
+            for (let i = 1; i <= Math.floor(num); i++) fact *= i;
+            addHistory(`${num}!`, fact);
+            display.innerText = fact.toString();
+        }
+
+        function calcClear() {
+            document.getElementById('calcDisplay').innerText = '0';
+            document.getElementById('calcExpr').innerText = '';
+        }
+
+        function calcBackspace() {
+            const display = document.getElementById('calcDisplay');
+            if (display.innerText.length > 1 && display.innerText !== 'Error') {
+                display.innerText = display.innerText.slice(0, -1);
+            } else {
+                display.innerText = '0';
+            }
+        }
+
+        function calcMemory(action) {
+            const display = document.getElementById('calcDisplay');
+            const val = parseFloat(display.innerText) || 0;
+            if (action === 'mc') {
+                calcMemoryValue = 0;
+                showToast('Memory Cleared');
+            }
+        }
+
+        function calcEquals() {
+            const display = document.getElementById('calcDisplay');
+            const exprDiv = document.getElementById('calcExpr');
+            const rawExpr = display.innerText;
+
+            try {
+                let sanitized = rawExpr;
+
+                // Handle Degree/Radian conversion for trig functions
+                if (angleMode === 'DEG') {
+                    sanitized = sanitized.replace(/sin\(([^)]+)\)/g, '(Math.sin(($1) * Math.PI / 180))');
+                    sanitized = sanitized.replace(/cos\(([^)]+)\)/g, '(Math.cos(($1) * Math.PI / 180))');
+                    sanitized = sanitized.replace(/tan\(([^)]+)\)/g, '(Math.tan(($1) * Math.PI / 180))');
+                } else {
+                    sanitized = sanitized.replace(/sin\(/g, 'Math.sin(');
+                    sanitized = sanitized.replace(/cos\(/g, 'Math.cos(');
+                    sanitized = sanitized.replace(/tan\(/g, 'Math.tan(');
+                }
+
+                sanitized = sanitized.replace(/sqrt\(/g, 'Math.sqrt(');
+                sanitized = sanitized.replace(/log\(/g, 'Math.log10(');
+                sanitized = sanitized.replace(/ln\(/g, 'Math.log(');
+                sanitized = sanitized.replace(/abs\(/g, 'Math.abs(');
+                sanitized = sanitized.replace(/π/g, 'Math.PI');
+                sanitized = sanitized.replace(/e/g, 'Math.E');
+                sanitized = sanitized.replace(/\^/g, '**');
+
+                // Evaluate math expression
+                const result = Function('"use strict"; return (' + sanitized + ')')();
+                
+                if (result !== undefined && !isNaN(result)) {
+                    const formattedRes = Number.isInteger(result) ? result : parseFloat(result.toFixed(8));
+                    exprDiv.innerText = `${rawExpr} =`;
+                    display.innerText = formattedRes.toString();
+                    addHistory(rawExpr, formattedRes);
+                } else {
+                    display.innerText = 'Error';
+                }
+            } catch (err) {
+                display.innerText = 'Error';
+            }
+        }
+
+        function addHistory(expr, result) {
+            historyList.unshift({ expr, result });
+            if (historyList.length > 15) historyList.pop();
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('calcHistoryContainer');
+            if (historyList.length === 0) {
+                container.innerHTML = `<div class="text-slate-400 text-center py-8 italic">No calculations yet</div>`;
+                return;
+            }
+            container.innerHTML = historyList.map(item => `
+                <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-right">
+                    <div class="text-slate-400 text-[11px]">${item.expr}</div>
+                    <div class="text-brand-600 dark:text-brand-400 font-bold text-sm">${item.result}</div>
+                </div>
+            `).join('');
+        }
+
+        function clearCalculatorHistory() {
+            historyList = [];
+            renderHistory();
+            showToast('History cleared');
+        }
+
+        // SGPA Calculator Engine
+        function addSgpaRow(subjectName = '', gradeVal = 'O', creditVal = 3) {
+            const container = document.getElementById('sgpaSubjectsContainer');
+            const rowId = Date.now() + Math.random().toString(36).substring(2, 5);
+            const scaleType = document.getElementById('sgpaScaleType').value;
+
+            const row = document.createElement('div');
+            row.id = `sgpa-row-${rowId}`;
+            row.className = 'sgpa-row grid grid-cols-12 gap-2 items-center bg-slate-50 dark:bg-slate-900/60 p-3 rounded-xl border border-slate-100 dark:border-slate-800';
+
+            let gradeInputHtml = '';
+            if (scaleType === 'letter') {
+                gradeInputHtml = `
+                    <select class="sgpa-grade w-full p-2 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+                        <option value="O" ${gradeVal==='O'?'selected':''}>O (10)</option>
+                        <option value="A+" ${gradeVal==='A+'?'selected':''}>A+ (9)</option>
+                        <option value="A" ${gradeVal==='A'?'selected':''}>A (8)</option>
+                        <option value="B+" ${gradeVal==='B+'?'selected':''}>B+ (7)</option>
+                        <option value="B" ${gradeVal==='B'?'selected':''}>B (6)</option>
+                        <option value="C" ${gradeVal==='C'?'selected':''}>C (5)</option>
+                        <option value="P" ${gradeVal==='P'?'selected':''}>P (4)</option>
+                        <option value="F" ${gradeVal==='F'?'selected':''}>F (0)</option>
+                    </select>
+                `;
+            } else if (scaleType === 'points') {
+                gradeInputHtml = `
+                    <input type="number" step="0.1" min="0" max="10" placeholder="Grade Point (0-10)" value="${gradeVal !== 'O' ? gradeVal : 8}" class="sgpa-grade w-full p-2 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+                `;
+            } else {
+                gradeInputHtml = `
+                    <input type="number" step="1" min="0" max="100" placeholder="Marks %" value="85" class="sgpa-grade w-full p-2 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+                `;
+            }
+
+            row.innerHTML = `
+                <div class="col-span-5 sm:col-span-5">
+                    <input type="text" placeholder="Subject Name" value="${subjectName}" class="sgpa-name w-full p-2 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+                </div>
+                <div class="col-span-4 sm:col-span-4">
+                    ${gradeInputHtml}
+                </div>
+                <div class="col-span-2 sm:col-span-2">
+                    <input type="number" step="0.5" min="1" max="20" value="${creditVal}" placeholder="Credits" class="sgpa-credit w-full p-2 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+                </div>
+                <div class="col-span-1 text-right">
+                    <button onclick="removeSgpaRow('${rowId}')" class="p-2 text-slate-400 hover:text-red-500 transition-colors">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(row);
+        }
+
+        function removeSgpaRow(rowId) {
+            const row = document.getElementById(`sgpa-row-${rowId}`);
+            if (row) row.remove();
+        }
+
+        function switchSgpaScale() {
+            const container = document.getElementById('sgpaSubjectsContainer');
+            container.innerHTML = '';
+            // Seed initial rows
+            addSgpaRow('Mathematics', 'O', 4);
+            addSgpaRow('Physics', 'A+', 4);
+            addSgpaRow('Computer Science', 'A', 3);
+        }
+
+        function calculateSgpa() {
+            const rows = document.querySelectorAll('.sgpa-row');
+            const scaleType = document.getElementById('sgpaScaleType').value;
+            
+            let totalPoints = 0;
+            let totalCredits = 0;
+
+            rows.forEach(row => {
+                const gradeElem = row.querySelector('.sgpa-grade');
+                const creditElem = row.querySelector('.sgpa-credit');
+                const credit = parseFloat(creditElem.value) || 0;
+
+                let point = 0;
+                if (scaleType === 'letter') {
+                    point = letterGradeMap[gradeElem.value] || 0;
+                } else if (scaleType === 'points') {
+                    point = parseFloat(gradeElem.value) || 0;
+                } else {
+                    const marks = parseFloat(gradeElem.value) || 0;
+                    point = Math.min(10, Math.max(0, marks / 10)); // Scale % marks to 10 point
+                }
+
+                totalPoints += (point * credit);
+                totalCredits += credit;
+            });
+
+            if (totalCredits === 0) {
+                showToast('Please enter valid credit hours', 'fa-triangle-exclamation');
+                return;
+            }
+
+            const sgpa = totalPoints / totalCredits;
+            document.getElementById('sgpaResultValue').innerText = sgpa.toFixed(2);
+            document.getElementById('sgpaTotalCredits').innerText = totalCredits;
+            document.getElementById('sgpaTotalPoints').innerText = totalPoints.toFixed(1);
+            document.getElementById('sgpaPercentage').innerText = `${(sgpa * 9.5).toFixed(1)}%`;
+
+            const badge = document.getElementById('sgpaBadge');
+            if (sgpa >= 8.5) {
+                badge.innerText = 'Outstanding (First Class Distinction)';
+                badge.className = 'inline-block mt-2 px-3 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300';
+            } else if (sgpa >= 7.0) {
+                badge.innerText = 'Very Good (First Class)';
+                badge.className = 'inline-block mt-2 px-3 py-0.5 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300';
+            } else if (sgpa >= 5.0) {
+                badge.innerText = 'Average (Second Class)';
+                badge.className = 'inline-block mt-2 px-3 py-0.5 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300';
+            } else {
+                badge.innerText = 'Needs Improvement';
+                badge.className = 'inline-block mt-2 px-3 py-0.5 rounded-full text-xs font-semibold bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300';
+            }
+        }
+
+        function sendSgpaToCgpa() {
+            const sgpaVal = parseFloat(document.getElementById('sgpaResultValue').innerText);
+            const creditsVal = parseFloat(document.getElementById('sgpaTotalCredits').innerText);
+
+            if (isNaN(sgpaVal) || sgpaVal === 0) {
+                showToast('Calculate SGPA first before sending to CGPA module');
+                return;
+            }
+
+            addCgpaRow(`Semester ${document.querySelectorAll('.cgpa-row').length + 1}`, sgpaVal, creditsVal);
+            switchTab('cgpa');
+            showToast('SGPA value added to CGPA module!');
+        }
+
+        // CGPA Calculator Engine
+        function addCgpaRow(semLabel = '', sgpaVal = 8.0, creditsVal = 20) {
+            const container = document.getElementById('cgpaSemestersContainer');
+            const rowId = Date.now() + Math.random().toString(36).substring(2, 5);
+            const semNum = document.querySelectorAll('.cgpa-row').length + 1;
+
+            const row = document.createElement('div');
+            row.id = `cgpa-row-${rowId}`;
+            row.className = 'cgpa-row grid grid-cols-12 gap-2 items-center bg-slate-50 dark:bg-slate-900/60 p-3 rounded-xl border border-slate-100 dark:border-slate-800';
+
+            row.innerHTML = `
+                <div class="col-span-5 sm:col-span-5">
+                    <input type="text" placeholder="Semester Name" value="${semLabel || 'Semester ' + semNum}" class="cgpa-name w-full p-2 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+                </div>
+                <div class="col-span-4 sm:col-span-4">
+                    <input type="number" step="0.01" min="0" max="10" value="${sgpaVal}" placeholder="SGPA" class="cgpa-sgpa w-full p-2 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+                </div>
+                <div class="col-span-2 sm:col-span-2">
+                    <input type="number" step="0.5" min="1" max="40" value="${creditsVal}" placeholder="Credits" class="cgpa-credit w-full p-2 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+                </div>
+                <div class="col-span-1 text-right">
+                    <button onclick="removeCgpaRow('${rowId}')" class="p-2 text-slate-400 hover:text-red-500 transition-colors">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(row);
+        }
+
+        function removeCgpaRow(rowId) {
+            const row = document.getElementById(`cgpa-row-${rowId}`);
+            if (row) row.remove();
+        }
+
+        function calculateCgpa() {
+            const rows = document.querySelectorAll('.cgpa-row');
+            let weightedSum = 0;
+            let totalCredits = 0;
+
+            rows.forEach(row => {
+                const sgpa = parseFloat(row.querySelector('.cgpa-sgpa').value) || 0;
+                const credit = parseFloat(row.querySelector('.cgpa-credit').value) || 0;
+                weightedSum += (sgpa * credit);
+                totalCredits += credit;
+            });
+
+            if (totalCredits === 0) {
+                showToast('Please enter valid semester details');
+                return;
+            }
+
+            const cgpa = weightedSum / totalCredits;
+            document.getElementById('cgpaResultValue').innerText = cgpa.toFixed(2);
+            document.getElementById('cgpaTotalSemesters').innerText = rows.length;
+            document.getElementById('cgpaEarnedCredits').innerText = totalCredits;
+            document.getElementById('cgpaPercentage').innerText = `${(cgpa * 9.5).toFixed(1)}%`;
+
+            const classification = document.getElementById('cgpaClassification');
+            if (cgpa >= 8.5) {
+                classification.innerText = 'First Class with Distinction';
+                classification.className = 'inline-block mt-2 px-3 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300';
+            } else if (cgpa >= 6.5) {
+                classification.innerText = 'First Class';
+                classification.className = 'inline-block mt-2 px-3 py-0.5 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300';
+            } else {
+                classification.innerText = 'Second Class';
+                classification.className = 'inline-block mt-2 px-3 py-0.5 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300';
+            }
+        }
+
+        // Target CGPA Planner Engine
+        function calculateTargetSgpa() {
+            const currentCgpa = parseFloat(document.getElementById('targetCurrentCgpa').value) || 0;
+            const completedCredits = parseFloat(document.getElementById('targetCompletedCredits').value) || 0;
+            const desiredCgpa = parseFloat(document.getElementById('targetDesiredCgpa').value) || 0;
+            const remainingCredits = parseFloat(document.getElementById('targetRemainingCredits').value) || 0;
+
+            if (remainingCredits <= 0 || (completedCredits === 0 && currentCgpa === 0)) {
+                showToast('Please enter valid credit numbers');
+                return;
+            }
+
+            const totalTargetPoints = desiredCgpa * (completedCredits + remainingCredits);
+            const currentEarnedPoints = currentCgpa * completedCredits;
+            const requiredRemainingPoints = totalTargetPoints - currentEarnedPoints;
+            const requiredSgpa = requiredRemainingPoints / remainingCredits;
+
+            const reqValue = document.getElementById('targetRequiredSgpa');
+            const badge = document.getElementById('targetFeasibilityBadge');
+            const msg = document.getElementById('targetAnalysisMsg');
+
+            reqValue.innerText = requiredSgpa.toFixed(2);
+
+            if (requiredSgpa <= 10.0 && requiredSgpa >= 0) {
+                if (requiredSgpa <= 8.5) {
+                    badge.innerText = 'Highly Achievable Target';
+                    badge.className = 'inline-block mt-2 px-3 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300';
+                } else {
+                    badge.innerText = 'Challenging Target (Requires High SGPA)';
+                    badge.className = 'inline-block mt-2 px-3 py-0.5 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300';
+                }
+                msg.innerText = `To graduate with a ${desiredCgpa.toFixed(2)} CGPA, you must maintain an average SGPA of ${requiredSgpa.toFixed(2)} across your remaining ${remainingCredits} credit hours.`;
+            } else {
+                badge.innerText = 'Mathematically Unachievable (> 10.0)';
+                badge.className = 'inline-block mt-2 px-3 py-0.5 rounded-full text-xs font-semibold bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300';
+                msg.innerText = `A target CGPA of ${desiredCgpa.toFixed(2)} requires an average SGPA of ${requiredSgpa.toFixed(2)} in remaining credits, which exceeds the maximum scale limit of 10.0.`;
+            }
+        }
+
+        // App Initialization
+        window.onload = function() {
+            switchSgpaScale();
+            addCgpaRow('Semester 1', 8.2, 20);
+            addCgpaRow('Semester 2', 8.6, 22);
+
+            // Keyboard Shortcuts for Calculator
+            document.addEventListener('keydown', function(e) {
+                const activeTab = document.querySelector('.tab-content:not(.hidden)').id;
+                if (activeTab !== 'tab-calculator') return;
+
+                if ((e.key >= '0' && e.key <= '9') || e.key === '.') {
+                    calcInput(e.key);
+                } else if (['+', '-', '*', '/'].includes(e.key)) {
+                    calcInputOp(e.key);
+                } else if (e.key === 'Enter' || e.key === '=') {
+                    e.preventDefault();
+                    calcEquals();
+                } else if (e.key === 'Backspace') {
+                    calcBackspace();
+                } else if (e.key === 'Escape') {
+                    calcClear();
+                }
+            });
+        };
+    </script>
+</body>
+</html>
